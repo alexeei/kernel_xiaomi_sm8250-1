@@ -3630,7 +3630,8 @@ static void walk_mm(struct lruvec *lruvec, struct mm_struct *mm, struct lru_gen_
 			unsigned long start = walk->next_addr;
 			unsigned long end = mm->highest_vm_end;
 
-			err = walk_page_range(start, end, &args);
+
+			err = walk_page_range(walk->next_addr, ULONG_MAX, &args);
 
 			up_read(&mm->mmap_sem);
 
@@ -4195,7 +4196,12 @@ static bool isolate_page(struct lruvec *lruvec, struct page *page, struct scan_c
 	if (!get_page_unless_zero(page))
 		return false;
 
-	ClearPageLRU(page);
+
+	if (!TestClearPageLRU(page)) {
+		put_page(page);
+		return false;
+	}
+
 
 	success = lru_gen_del_page(lruvec, page, true);
 	VM_BUG_ON_PAGE(!success, page);
