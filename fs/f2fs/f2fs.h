@@ -1158,6 +1158,8 @@ enum cp_reason_type {
 	CP_SPEC_LOG_NUM,
 	CP_RECOVER_DIR,
 	CP_XATTR_DIR,
+    CP_PARENT_XATTR_SET,
+    NR_CP_REASON_TYPE,
 };
 
 enum iostat_type {
